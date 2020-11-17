@@ -9,21 +9,21 @@ import (
 // Config holds the provider configuration
 type Config struct {
 	TrueNASHost string
+	Username    string
+	Password    string
 }
 
-// Client returns a new client for accessing Red Hat Satellite
+// Client returns a new client for accessing TrueNAS
 func (c *Config) Client() (*gotruenas.APIClient, context.Context, error) {
 	config := gotruenas.NewConfiguration()
 
-	// token, err := gorhsm.GenerateAccessToken(c.RefreshToken)
-	// if err != nil {
-	// 	return nil, nil, err
-	// }
+	config.Host = c.TrueNASHost
+	config.Scheme = "https"
 
-	// auth := context.WithValue(context.Background(), gorhsm.ContextAPIKey, gorhsm.APIKey{
-	// 	Key:    token.AccessToken,
-	// 	Prefix: "Bearer", // Omit if not necessary.
-	// })
+	auth := context.WithValue(context.Background(), gotruenas.ContextBasicAuth, gotruenas.BasicAuth{
+		UserName: c.Username,
+		Password: c.Password,
+	})
 
 	return gotruenas.NewAPIClient(config), auth, nil
 }
